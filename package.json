@@ -1,0 +1,41 @@
+{
+  "name": "@paragraphcms/parser-core",
+  "version": "0.1.0",
+  "description": "Shared internal parser primitives for Paragraph CMS.",
+  "license": "MIT",
+  "author": "Paragraph CMS",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run check && npm run build"
+  },
+  "dependencies": {
+    "marked": "^15.0.12",
+    "sanitize-html": "^2.15.0",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/sanitize-html": "^2.13.0",
+    "typescript": "^5.9.3"
+  }
+}
