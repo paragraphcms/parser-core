@@ -259,39 +259,6 @@ function renderMark(mark: ParagraphTiptapMark, children: string) {
   }
 }
 
-function renderImageMeta(slug: string | undefined, alt: string | undefined) {
-  if (!slug && !alt) {
-    return "";
-  }
-
-  return wrapTag(
-    "div",
-    {
-      "data-type": "editor-image-meta",
-    },
-    [
-      slug
-        ? wrapTag(
-            "div",
-            {
-              "data-type": "editor-image-slug",
-            },
-            escapeHtml(slug),
-          )
-        : "",
-      alt
-        ? wrapTag(
-            "div",
-            {
-              "data-type": "editor-image-alt",
-            },
-            escapeHtml(alt),
-          )
-        : "",
-    ].join(""),
-  );
-}
-
 function renderImageNode(attrs: Record<string, unknown> | undefined) {
   const src = toStringValue(attrs?.src);
 
@@ -300,6 +267,7 @@ function renderImageNode(attrs: Record<string, unknown> | undefined) {
   }
 
   const alt = toStringValue(attrs?.alt) ?? "";
+  const caption = toStringValue(attrs?.caption);
   const imageHtml = selfClosingTag("img", {
     src,
     alt,
@@ -308,21 +276,14 @@ function renderImageNode(attrs: Record<string, unknown> | undefined) {
     height: toNumber(attrs?.height),
     loading: "lazy",
   });
-  const imageMeta = renderImageMeta(
-    toStringValue(attrs?.slug),
-    alt || undefined,
-  );
-
-  if (!imageMeta) {
+  if (!caption) {
     return imageHtml;
   }
 
   return wrapTag(
-    "div",
-    {
-      "data-type": "editor-image",
-    },
-    `${imageHtml}${imageMeta}`,
+    "figure",
+    {},
+    `${imageHtml}${wrapTag("figcaption", {}, escapeHtml(caption))}`,
   );
 }
 
@@ -590,14 +551,6 @@ function createBaseTransformTags(options: ResolvedRenderOptions) {
       transformSlot(tagName, attribs, "summary", options),
     div: (tagName, attribs) => {
       switch (attribs["data-type"]) {
-        case "editor-image":
-          return transformSlot(tagName, attribs, "figure", options, "figure");
-        case "editor-image-meta":
-          return transformSlot(tagName, attribs, "imageMeta", options);
-        case "editor-image-slug":
-          return transformSlot(tagName, attribs, "imageSlug", options, "span");
-        case "editor-image-alt":
-          return transformSlot(tagName, attribs, "imageAlt", options, "span");
         case "paragraph-collapsible-content":
           return transformSlot(
             tagName,
